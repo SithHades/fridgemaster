@@ -16,7 +16,9 @@ model User {
   password  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  products  Product[]
+  products        Product[]
+  credits         Int               @default(5)
+  generatedRecipes GeneratedRecipe[]
 }
 
 model Product {
@@ -48,4 +50,15 @@ model Dictionary {
   updatedAt    DateTime  @updatedAt
 
   @@unique([name, brand])
+}
+
+model GeneratedRecipe {
+  id              String   @id @default(cuid())
+  ingredientsHash String   @unique
+  ingredients     Json
+  content         String
+  createdAt       DateTime @default(now())
+  
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
