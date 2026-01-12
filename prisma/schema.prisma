@@ -28,7 +28,6 @@ model Product {
   openedDate   DateTime?
   consumedAt   DateTime? // If set, item is fully consumed
   isDeleted    Boolean   @default(false) // Soft delete (trash)
-  barcode      String?
   
   userId       String
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)

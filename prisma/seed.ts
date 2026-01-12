@@ -17,7 +17,6 @@ async function main() {
             name: 'Milk',
             quantity: '1L',
             expiryDate: new Date(new Date().setDate(new Date().getDate() + 5)), // Expires in 5 days
-            barcode: '123456',
           },
           {
             name: 'Eggs',

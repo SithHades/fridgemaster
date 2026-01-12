@@ -12,12 +12,12 @@ import { Plus, Loader2 } from 'lucide-react';
 export function AddProductButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [suggestions, setSuggestions] = useState<{name: string, defaultQty: string | null}[]>([]);
-    
+    const [suggestions, setSuggestions] = useState<{ name: string, defaultQty: string | null }[]>([]);
+
     // Form state
     const [name, setName] = useState('');
     const [quantity, setQuantity] = useState('');
-    
+
     // Debounced search could be implemented, for now simple onChange
     const handleNameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -30,7 +30,7 @@ export function AddProductButton() {
         }
     };
 
-    const selectSuggestion = (s: {name: string, defaultQty: string | null}) => {
+    const selectSuggestion = (s: { name: string, defaultQty: string | null }) => {
         setName(s.name);
         if (s.defaultQty) setQuantity(s.defaultQty);
         setSuggestions([]);
@@ -51,8 +51,8 @@ export function AddProductButton() {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button className="rounded-full shadow-lg w-12 h-12 p-0 fixed bottom-6 right-6 md:static md:w-auto md:h-10 md:px-4 md:rounded-md">
-                   <Plus className="w-6 h-6 md:mr-2 md:w-4 md:h-4" /> 
-                   <span className="hidden md:inline">Add Item</span>
+                    <Plus className="w-6 h-6 md:mr-2 md:w-4 md:h-4" />
+                    <span className="hidden md:inline">Add Item</span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
@@ -62,12 +62,12 @@ export function AddProductButton() {
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
                     <div className="grid gap-2 relative">
                         <Label htmlFor="name">Name</Label>
-                        <Input 
-                            id="name" 
-                            name="name" 
-                            value={name} 
-                            onChange={handleNameChange} 
-                            required 
+                        <Input
+                            id="name"
+                            name="name"
+                            value={name}
+                            onChange={handleNameChange}
+                            required
                             autoComplete="off"
                         />
                         {suggestions.length > 0 && (
@@ -88,23 +88,20 @@ export function AddProductButton() {
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="quantity">Quantity</Label>
-                        <Input 
-                            id="quantity" 
-                            name="quantity" 
+                        <Input
+                            id="quantity"
+                            name="quantity"
                             value={quantity}
                             onChange={(e) => setQuantity(e.target.value)}
-                            placeholder="e.g. 500ml, 2 packs" 
-                            required 
+                            placeholder="e.g. 500ml, 2 packs"
+                            required
                         />
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="expiryDate">Expiry Date</Label>
                         <Input id="expiryDate" name="expiryDate" type="date" required />
                     </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="barcode">Barcode (Optional)</Label>
-                        <Input id="barcode" name="barcode" placeholder="Scanned code" />
-                    </div>
+
                     <Button type="submit" disabled={isLoading}>
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Save Item

@@ -2,10 +2,8 @@ import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
 
 async function getUser(email: string) {
   try {
@@ -32,17 +30,32 @@ export const { auth, signIn, signOut } = NextAuth({
           const { email, password } = parsedCredentials.data;
           const user = await getUser(email);
           if (!user) return null;
-          
+
           const passwordsMatch = await bcrypt.compare(password, user.password);
           if (passwordsMatch) {
-             // Return user object compatible with NextAuth
-             return { id: user.id, email: user.email };
+            // Return user object compatible with NextAuth
+            return { id: user.id, email: user.email };
           }
         }
-        
+
         console.log('Invalid credentials');
         return null;
       },
     }),
   ],
+  callbacks: {
+    ...authConfig.callbacks,
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+  },
 });

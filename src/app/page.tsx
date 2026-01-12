@@ -9,7 +9,7 @@ import { isBefore, addDays } from 'date-fns';
 
 export default async function Dashboard() {
   const products = await getProducts();
-  
+
   // Filter for items expiring within 48 hours for the recipe generator
   const now = new Date();
   const next48h = addDays(now, 2);
@@ -24,39 +24,39 @@ export default async function Dashboard() {
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">FridgeMaster</h1>
           <div className="flex items-center gap-2">
-             <RecipeGenerator expiringItems={expiringItems} />
-             <form action={async () => {
-                'use server';
-                await signOut();
-             }}>
-                <Button variant="ghost" size="icon" title="Sign Out">
-                    <LogOut className="w-5 h-5" />
-                </Button>
-             </form>
+            <AddProductButton />
+            <RecipeGenerator expiringItems={expiringItems} />
+            <form action={async () => {
+              'use server';
+              await signOut();
+            }}>
+              <Button variant="ghost" size="icon" title="Sign Out">
+                <LogOut className="w-5 h-5" />
+              </Button>
+            </form>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         <div className="flex flex-col gap-6">
-            {/* Search Bar could go here */}
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {products.length > 0 ? (
-                    products.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))
-                ) : (
-                    <div className="col-span-full text-center py-12 text-gray-400">
-                        <p>Your fridge is empty!</p>
-                        <p className="text-sm">Add some items to get started.</p>
-                    </div>
-                )}
-            </div>
+          {/* Search Bar could go here */}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {products.length > 0 ? (
+              products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12 text-gray-400">
+                <p>Your fridge is empty!</p>
+                <p className="text-sm">Add some items to get started.</p>
+              </div>
+            )}
+          </div>
         </div>
       </main>
 
-      <AddProductButton />
     </div>
   );
 }
