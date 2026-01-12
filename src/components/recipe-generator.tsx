@@ -38,9 +38,9 @@ export function RecipeGenerator({ expiringItems, otherItems }: { expiringItems: 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
+                <Button variant="outline" className="gap-2 px-3 sm:px-4">
                     <Sparkles className="w-4 h-4 text-purple-600" />
-                    Generate Recipe
+                    <span className="hidden sm:inline">Generate Recipe</span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col">

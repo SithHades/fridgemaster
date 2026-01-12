@@ -59,4 +59,7 @@ ENV PORT=3000
 # set hostname to localhost
 ENV HOSTNAME="0.0.0.0"
 
+COPY --from=builder /app/prisma ./prisma
+RUN npm install -g prisma tsx
+
 CMD ["node", "server.js"]

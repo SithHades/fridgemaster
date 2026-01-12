@@ -4,13 +4,14 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  const password = await bcrypt.hash('admin123', 10)
+  const email = process.env.SEED_USER_EMAIL || 'admin@fridge.com'
+  const passwordHash = await bcrypt.hash(process.env.SEED_USER_PASSWORD || 'admin123', 10)
   const user = await prisma.user.upsert({
-    where: { email: 'admin@fridge.com' },
+    where: { email },
     update: {},
     create: {
-      email: 'admin@fridge.com',
-      password,
+      email,
+      password: passwordHash,
       products: {
         create: [
           {
@@ -36,9 +37,17 @@ async function main() {
 
   for (const item of dictItems) {
     await prisma.dictionary.upsert({
-      where: { name: item.name },
+      where: {
+        name_brand: {
+          name: item.name,
+          brand: ""
+        }
+      },
       update: {},
-      create: item,
+      create: {
+        ...item,
+        brand: ""
+      },
     })
   }
 
