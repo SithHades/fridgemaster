@@ -2,25 +2,19 @@
 
 import { prisma } from '@/lib/prisma';
 
-export async function updateDictionary(name: string, defaultQty: string) {
-    // Case insensitive check could be complex in code, but here we just try to find exact or similar.
-    // We will normalize to Title Case or lowercase for storage to help?
-    // User req said: "Milk and milk should be the same".
-    // So we store as Title Case usually, or stick to one.
-
-    // Implementation: Check if exists (case insensitive via raw query or simple findFirst logic if we trust DB collation, but SQLite is case sensitive usually?)
-    // Let's do a findFirst with simple case logic if possible, or just store everything capitalized.
-
-    // Simple approach: Store original casing from user input, but search effectively?
-    // Better: Normalize name to Title Case for the dictionary.
-
-    // NOTE: In a real app we might want a better normalization strategy.
-
+// Update signature to include brand
+export async function updateDictionary(name: string, defaultQty: string, brand: string = "") {
     await prisma.dictionary.upsert({
-        where: { name: name }, // This assumes exact match on 'name' which is unique.
-        update: { defaultQty }, // Update default quantity to latest used? Or keep old? Requirements didn't specify, assume update.
+        where: {
+            name_brand: {
+                name: name,
+                brand: brand
+            }
+        },
+        update: { defaultQty },
         create: {
             name: name,
+            brand: brand,
             defaultQty
         }
     });
@@ -31,11 +25,10 @@ export async function searchDictionary(query: string) {
 
     const results = await prisma.dictionary.findMany({
         where: {
-            name: {
-                contains: query,
-                // mode: 'insensitive' // Only works for Postgres? For SQLite need to check.
-                // Prisma Client with SQLite normally supports insensitive.
-            }
+            OR: [
+                { name: { contains: query, mode: 'insensitive' } },
+                { brand: { contains: query, mode: 'insensitive' } }
+            ]
         },
         take: 5
     });
@@ -54,9 +47,9 @@ export async function deleteDictionaryItem(id: string) {
     });
 }
 
-export async function updateDictionaryItem(id: string, name: string, defaultQty: string) {
+export async function updateDictionaryItem(id: string, name: string, brand: string, defaultQty: string) {
     await prisma.dictionary.update({
         where: { id },
-        data: { name, defaultQty }
+        data: { name, brand, defaultQty }
     });
 }

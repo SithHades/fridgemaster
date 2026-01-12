@@ -29,6 +29,7 @@ export async function createProduct(formData: FormData) {
 
   const name = formData.get('name') as string;
   const quantity = formData.get('quantity') as string;
+  const brand = formData.get('brand') as string;
   const expiryDate = new Date(formData.get('expiryDate') as string);
   const purchaseDate = new Date();
 
@@ -45,6 +46,7 @@ export async function createProduct(formData: FormData) {
     data: {
       name,
       quantity,
+      brand,
       expiryDate,
       purchaseDate,
       consumedAt,
@@ -53,7 +55,7 @@ export async function createProduct(formData: FormData) {
   });
 
   // Update Dictionary
-  await updateDictionary(name, quantity);
+  await updateDictionary(name, quantity, brand);
 
   revalidatePath('/');
 }
@@ -63,7 +65,8 @@ export async function updateProduct(id: string, formData: FormData) {
   if (!session?.user?.id) throw new Error('Unauthorized');
 
   const quantity = formData.get('quantity') as string;
-  const name = formData.get('name') as string; // Allow renaming?
+  const name = formData.get('name') as string;
+  const brand = formData.get('brand') as string;
 
   // We only typically update quantity in "Partial Consume" or generic edit
   // But generic edit might allow dates too.
@@ -81,6 +84,7 @@ export async function updateProduct(id: string, formData: FormData) {
     data: {
       name,
       quantity,
+      brand,
       expiryDate,
       consumedAt
     }

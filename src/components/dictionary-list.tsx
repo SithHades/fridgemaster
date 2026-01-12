@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 type DictionaryItem = {
     id: string;
     name: string;
+    brand: string | null;
     defaultQty: string | null;
 };
 
@@ -17,7 +18,7 @@ export function DictionaryList({ initialItems }: { initialItems: DictionaryItem[
     const router = useRouter();
     const [items, setItems] = useState(initialItems);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [editForm, setEditForm] = useState({ name: '', defaultQty: '' });
+    const [editForm, setEditForm] = useState({ name: '', brand: '', defaultQty: '' });
     const [isLoading, setIsLoading] = useState<string | null>(null);
 
     const handleDelete = async (id: string) => {
@@ -31,18 +32,18 @@ export function DictionaryList({ initialItems }: { initialItems: DictionaryItem[
 
     const startEdit = (item: DictionaryItem) => {
         setEditingId(item.id);
-        setEditForm({ name: item.name, defaultQty: item.defaultQty || '' });
+        setEditForm({ name: item.name, brand: item.brand || '', defaultQty: item.defaultQty || '' });
     };
 
     const cancelEdit = () => {
         setEditingId(null);
-        setEditForm({ name: '', defaultQty: '' });
+        setEditForm({ name: '', brand: '', defaultQty: '' });
     };
 
     const saveEdit = async (id: string) => {
         setIsLoading(id);
-        await updateDictionaryItem(id, editForm.name, editForm.defaultQty);
-        setItems(items.map(i => i.id === id ? { ...i, name: editForm.name, defaultQty: editForm.defaultQty } : i));
+        await updateDictionaryItem(id, editForm.name, editForm.brand, editForm.defaultQty);
+        setItems(items.map(i => i.id === id ? { ...i, name: editForm.name, brand: editForm.brand, defaultQty: editForm.defaultQty } : i));
         setIsLoading(null);
         setEditingId(null);
         router.refresh();
@@ -59,17 +60,23 @@ export function DictionaryList({ initialItems }: { initialItems: DictionaryItem[
                     {items.map((item) => (
                         <div key={item.id} className="p-4 flex items-center justify-between gap-4">
                             {editingId === item.id ? (
-                                <div className="flex-1 flex items-center gap-2">
+                                <div className="flex-1 flex items-center gap-2 flex-wrap">
                                     <Input
                                         value={editForm.name}
                                         onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                                        className="max-w-[150px] sm:max-w-xs"
+                                        className="w-[120px] sm:w-[150px]"
                                         placeholder="Name"
+                                    />
+                                    <Input
+                                        value={editForm.brand}
+                                        onChange={(e) => setEditForm({ ...editForm, brand: e.target.value })}
+                                        className="w-[100px] sm:w-[120px]"
+                                        placeholder="Brand"
                                     />
                                     <Input
                                         value={editForm.defaultQty}
                                         onChange={(e) => setEditForm({ ...editForm, defaultQty: e.target.value })}
-                                        className="max-w-[100px] sm:max-w-[120px]"
+                                        className="w-[80px] sm:w-[100px]"
                                         placeholder="Qty"
                                     />
                                     <Button size="icon" variant="ghost" onClick={() => saveEdit(item.id)} disabled={!!isLoading}>
@@ -82,8 +89,11 @@ export function DictionaryList({ initialItems }: { initialItems: DictionaryItem[
                             ) : (
                                 <>
                                     <div className="flex-1">
-                                        <h3 className="font-medium text-gray-900">{item.name}</h3>
-                                        <p className="text-sm text-gray-500">{item.defaultQty || 'No default qty'}</p>
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-medium text-gray-900">{item.name}</h3>
+                                            {item.brand && <span className="text-xs px-2 py-0.5 bg-gray-100 rounded text-gray-600 font-medium">{item.brand}</span>}
+                                        </div>
+                                        <p className="text-sm text-gray-500 mt-1">{item.defaultQty || 'No default qty'}</p>
                                     </div>
                                     <div className="flex items-center gap-1">
                                         <Button size="icon" variant="ghost" onClick={() => startEdit(item)}>

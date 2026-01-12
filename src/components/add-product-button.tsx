@@ -13,10 +13,10 @@ import { addDays, format } from 'date-fns';
 export function AddProductButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [suggestions, setSuggestions] = useState<{ name: string, defaultQty: string | null }[]>([]);
-
+    const [suggestions, setSuggestions] = useState<{ id: string, name: string, brand: string | null, defaultQty: string | null }[]>([]);
     // Form state
     const [name, setName] = useState('');
+    const [brand, setBrand] = useState('');
     const [quantity, setQuantity] = useState('');
 
     // Debounced search could be implemented, for now simple onChange
@@ -25,14 +25,20 @@ export function AddProductButton() {
         setName(val);
         if (val.length > 1) {
             const results = await searchDictionary(val);
-            setSuggestions(results);
+            // Ensure brand is present or default to null/empty
+            const safeResults = (results as any[]).map(r => ({
+                ...r,
+                brand: r.brand || null
+            }));
+            setSuggestions(safeResults);
         } else {
             setSuggestions([]);
         }
     };
 
-    const selectSuggestion = (s: { name: string, defaultQty: string | null }) => {
+    const selectSuggestion = (s: { name: string, brand: string | null, defaultQty: string | null }) => {
         setName(s.name);
+        if (s.brand) setBrand(s.brand);
         if (s.defaultQty) setQuantity(s.defaultQty);
         setSuggestions([]);
     };
@@ -45,6 +51,7 @@ export function AddProductButton() {
         setIsLoading(false);
         setIsOpen(false);
         setName('');
+        setBrand('');
         setQuantity('');
     };
 
@@ -75,17 +82,30 @@ export function AddProductButton() {
                             <div className="absolute top-full left-0 right-0 z-10 bg-white border rounded-md shadow-lg mt-1 max-h-40 overflow-auto">
                                 {suggestions.map((s) => (
                                     <button
-                                        key={s.name}
+                                        key={s.id}
                                         type="button"
                                         className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm"
                                         onClick={() => selectSuggestion(s)}
                                     >
-                                        <span className="font-medium">{s.name}</span>
-                                        {s.defaultQty && <span className="text-gray-400 ml-2 text-xs">({s.defaultQty})</span>}
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-medium">{s.name}</span>
+                                            {s.brand && <span className="text-xs px-2 py-0.5 bg-gray-100 rounded text-gray-600 font-medium">{s.brand}</span>}
+                                        </div>
+                                        {s.defaultQty && <span className="text-gray-400 text-xs">Default: {s.defaultQty}</span>}
                                     </button>
                                 ))}
                             </div>
                         )}
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="brand">Brand</Label>
+                        <Input
+                            id="brand"
+                            name="brand"
+                            value={brand}
+                            onChange={(e) => setBrand(e.target.value)}
+                            placeholder="Optional"
+                        />
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="quantity">Quantity</Label>

@@ -29,6 +29,9 @@ model Product {
   consumedAt   DateTime? // If set, item is fully consumed
   isDeleted    Boolean   @default(false) // Soft delete (trash)
   
+  brand        String?
+  metadata     Json?     @default("{}")
+
   userId       String
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -38,7 +41,11 @@ model Product {
 
 model Dictionary {
   id           String    @id @default(cuid())
-  name         String    @unique 
+  name         String
+  brand        String    @default("")
+  metadata     Json?     @default("{}")
   defaultQty   String?
   updatedAt    DateTime  @updatedAt
+
+  @@unique([name, brand])
 }
