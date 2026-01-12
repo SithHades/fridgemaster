@@ -28,11 +28,11 @@ async function main() {
       }
     },
   })
-  
+
   const dictItems = [
-      { name: 'Milk', defaultQty: '1L' },
-      { name: 'Eggs', defaultQty: '12 pack' },
-      { name: 'Butter', defaultQty: '250g' },
+    { name: 'Milk', defaultQty: '1L' },
+    { name: 'Eggs', defaultQty: '12 pack' },
+    { name: 'Butter', defaultQty: '250g' },
   ]
 
   for (const item of dictItems) {
