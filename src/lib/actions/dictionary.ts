@@ -41,3 +41,22 @@ export async function searchDictionary(query: string) {
     });
     return results;
 }
+
+export async function getDictionaryItems() {
+    return await prisma.dictionary.findMany({
+        orderBy: { name: 'asc' }
+    });
+}
+
+export async function deleteDictionaryItem(id: string) {
+    await prisma.dictionary.delete({
+        where: { id }
+    });
+}
+
+export async function updateDictionaryItem(id: string, name: string, defaultQty: string) {
+    await prisma.dictionary.update({
+        where: { id },
+        data: { name, defaultQty }
+    });
+}

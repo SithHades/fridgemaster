@@ -12,7 +12,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 // But plan didn't specify adding react-markdown. I will try to use simple whitespace handling first or install if needed.
 // Update: I will just use whitespace-pre-line and some simple formatting for now to save installing more packages unless requested.
 
-export function RecipeGenerator({ expiringItems }: { expiringItems: string[] }) {
+export function RecipeGenerator({ expiringItems, otherItems }: { expiringItems: string[], otherItems: string[] }) {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [recipe, setRecipe] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export function RecipeGenerator({ expiringItems }: { expiringItems: string[] }) 
         try {
             const res = await fetch('/api/recipes', {
                 method: 'POST',
-                body: JSON.stringify({ ingredients: expiringItems }),
+                body: JSON.stringify({ expiringItems, otherItems }),
             });
             const data = await res.json();
             if (data.recipe) {
@@ -52,9 +52,10 @@ export function RecipeGenerator({ expiringItems }: { expiringItems: string[] }) 
                         <div className="flex flex-col items-center justify-center h-full text-center p-8 space-y-4">
                             <p className="text-gray-500">
                                 I see {expiringItems.length} items expiring soon.
+                                I can also use your {otherItems.length} other items if needed.
                                 Should I come up with a recipe idea?
                             </p>
-                            <Button onClick={handleGenerate} disabled={loading || expiringItems.length === 0} className="bg-purple-600 hover:bg-purple-700">
+                            <Button onClick={handleGenerate} disabled={loading || (expiringItems.length === 0 && otherItems.length === 0)} className="bg-purple-600 hover:bg-purple-700">
                                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 Generate Ideas
                             </Button>

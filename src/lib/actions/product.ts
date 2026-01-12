@@ -20,7 +20,7 @@ export async function getProducts() {
     },
   });
 
-  return products;
+  return products.filter(p => p.quantity !== '0');
 }
 
 export async function createProduct(formData: FormData) {
@@ -36,12 +36,18 @@ export async function createProduct(formData: FormData) {
     throw new Error('Missing required fields');
   }
 
+  let consumedAt = undefined;
+  if (quantity === '0') {
+    consumedAt = new Date();
+  }
+
   await prisma.product.create({
     data: {
       name,
       quantity,
       expiryDate,
       purchaseDate,
+      consumedAt,
       userId: session.user.id,
     },
   });
@@ -65,12 +71,18 @@ export async function updateProduct(id: string, formData: FormData) {
   const expiryDateStr = formData.get('expiryDate') as string;
   const expiryDate = expiryDateStr ? new Date(expiryDateStr) : undefined;
 
+  let consumedAt = undefined;
+  if (quantity === '0') {
+    consumedAt = new Date();
+  }
+
   await prisma.product.update({
     where: { id, userId: session.user.id },
     data: {
       name,
       quantity,
-      expiryDate
+      expiryDate,
+      consumedAt
     }
   });
 

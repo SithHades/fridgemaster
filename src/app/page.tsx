@@ -4,8 +4,9 @@ import { AddProductButton } from '@/components/add-product-button';
 import { RecipeGenerator } from '@/components/recipe-generator';
 import { signOut } from '@/auth';
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, Book } from 'lucide-react';
 import { isBefore, addDays } from 'date-fns';
+import Link from 'next/link';
 
 export default async function Dashboard() {
   const products = await getProducts();
@@ -17,6 +18,10 @@ export default async function Dashboard() {
     .filter(p => isBefore(p.expiryDate, next48h))
     .map(p => p.name);
 
+  const otherItems = products
+    .filter(p => !isBefore(p.expiryDate, next48h))
+    .map(p => p.name);
+
   return (
     <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
       {/* Header */}
@@ -25,7 +30,12 @@ export default async function Dashboard() {
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">FridgeMaster</h1>
           <div className="flex items-center gap-2">
             <AddProductButton />
-            <RecipeGenerator expiringItems={expiringItems} />
+            <RecipeGenerator expiringItems={expiringItems} otherItems={otherItems} />
+            <Link href="/dictionary">
+              <Button variant="ghost" size="icon" title="Dictionary">
+                <Book className="w-5 h-5" />
+              </Button>
+            </Link>
             <form action={async () => {
               'use server';
               await signOut();

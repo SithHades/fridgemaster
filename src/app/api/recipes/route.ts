@@ -6,18 +6,18 @@ import { auth } from '@/auth';
 export async function POST(request: Request) {
   const session = await auth();
   if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const { ingredients } = await request.json();
-    
-    if (!ingredients || !Array.isArray(ingredients)) {
-        return NextResponse.json({ error: 'Invalid ingredients list' }, { status: 400 });
+    const { expiringItems, otherItems } = await request.json();
+
+    if (!expiringItems && !otherItems) {
+      return NextResponse.json({ error: 'No ingredients provided' }, { status: 400 });
     }
 
     const service = new RecipeService();
-    const recipe = await service.generateRecipe(ingredients);
+    const recipe = await service.generateRecipe(expiringItems || [], otherItems || []);
 
     return NextResponse.json({ recipe });
   } catch (error) {

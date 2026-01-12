@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { createProduct } from '@/lib/actions/product';
 import { searchDictionary } from '@/lib/actions/dictionary';
 import { Plus, Loader2 } from 'lucide-react';
+import { addDays, format } from 'date-fns';
 
 export function AddProductButton() {
     const [isOpen, setIsOpen] = useState(false);
@@ -99,7 +100,13 @@ export function AddProductButton() {
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="expiryDate">Expiry Date</Label>
-                        <Input id="expiryDate" name="expiryDate" type="date" required />
+                        <Input
+                            id="expiryDate"
+                            name="expiryDate"
+                            type="date"
+                            required
+                            defaultValue={format(addDays(new Date(), 10), 'yyyy-MM-dd')}
+                        />
                     </div>
 
                     <Button type="submit" disabled={isLoading}>
