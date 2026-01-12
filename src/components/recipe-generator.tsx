@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import ReactMarkdown from 'react-markdown';
+
 
 // Need a simple markdown renderer, but to keep dependencies low we might just display text or simple HTML.
 // Actually, standard text with whitespace-pre-wrap might be enough for MVP if no markdown lib.
@@ -61,9 +61,9 @@ export function RecipeGenerator({ expiringItems }: { expiringItems: string[] }) 
                         </div>
                     ) : (
                         <ScrollArea className="h-full w-full rounded-md border p-4 bg-gray-50">
-                           <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                               {recipe}
-                           </div>
+                            <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                                {recipe}
+                            </div>
                         </ScrollArea>
                     )}
                 </div>
