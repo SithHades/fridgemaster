@@ -4,11 +4,6 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import crypto from "crypto";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPEN_ROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-});
-
 export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user?.email) {
@@ -52,6 +47,11 @@ export async function POST(req: Request) {
   }
 
   try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPEN_ROUTER_API_KEY,
+      baseURL: "https://openrouter.ai/api/v1",
+    });
+
     const prompt = `
       You are a professional chef. Create a creative recipe using the following ingredients:
       

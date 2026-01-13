@@ -59,6 +59,20 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 COPY --from=builder /app/prisma ./prisma
-RUN npm install -g prisma tsx
+# Copy the check-env script from builder (source) to runner
+COPY --from=builder /app/scripts/check-env.js ./scripts/check-env.js
 
-CMD ["node", "server.js"]
+# Install prisma CLI globally (or rely on standalone if it bundles it? No standalone doesn't bundle node_modules dev deps)
+# But we need prisma for migrations.
+# Installing global packages in runner stage increases size, but necessary for migrations if not in deps.
+# Note: npm install -g needs root, so we switch back to root or do it before USER nextjs?
+# The original file did `RUN npm install -g prisma tsx` after `USER nextjs` which might fail if permissions are strict,
+# but `base` image is alpine and `npm` is there.
+# However, usually better to install as root.
+
+USER root
+RUN npm install -g prisma tsx
+USER nextjs
+
+# Using shell form to run multiple commands
+CMD ["/bin/sh", "-c", "node scripts/check-env.js && npx prisma migrate deploy && node server.js"]

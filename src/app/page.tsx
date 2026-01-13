@@ -8,6 +8,8 @@ import { LogOut, Book } from 'lucide-react';
 import { isBefore, addDays } from 'date-fns';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Dashboard() {
   const products = await getProducts();
 
