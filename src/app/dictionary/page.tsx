@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function DictionaryPage() {
     const items = await getDictionaryItems();
 
